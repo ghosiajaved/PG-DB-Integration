@@ -1,91 +1,33 @@
-const {Client}= require('pg');
-require('dotenv').config();
+const db = require('./db/db');
 
-const con= new Client({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    port: process.env.DB_PORT,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-})
+// Fetch all products
+db.getAllFromTable('products')
+    .then(res => console.log(res.rows))
+    .catch(err => console.log(err.message));
 
+// Fetch all categories
+db.getAllFromTable('categories')
+    .then(res => console.log(res.rows))
+    .catch(err => console.log(err.message));
 
-con.connect().then(()=>console.log("Connected"));
+db.getAllFromTable('users')
+    .then(res => console.log(res.rows))
+    .catch(err => console.log(err.message));
 
-//Products table
-con.query("Select * from products",(err,res)=>{
-    if(!err){
-        console.log(res.rows);
-    }
-    else{
-        console.log(err.message);
-    }
-    con.end;
-})
+// Insert a user
+const insertValues = [3, 'walijaa@gmail.com', 'Walija', 'Bahria Town', '1000'];
+db.insertUser(insertValues)
+    .then(() => console.log('User inserted successfully'))
+    .catch(err => console.log(err.message));
 
-//categories table
-con.query("Select * from categories",(err,res)=>{
-    if(!err){
-        console.log(res.rows);
-    }
-    else{
-        console.log(err.message);
-    }
-    con.end;
-})
-
-
-//INSERT OPERATION
-const insertQuery = `INSERT INTO users (user_id, email, name , address , phone) VALUES ($1,$2,$3,$4,$5)`;
-const insertValues = [3 , 'walijaa@gmail.com' , 'Walija', 'Bahria Town' , '1000'];
-
-con.query(insertQuery, insertValues, (err, res) => {
-    if (!err) {
-        console.log('User inserted successfully');
-    } else {
-        console.log(err.message);
-    }
-    con.end;  
-});
-
-
-//UDATE OPERATION
-const updateQuery = `UPDATE users SET name = $1 WHERE user_id = $2`;
+// Update a user
 const updateValues = ['Ayla', 3];
+db.updateUser(updateValues)
+    .then(() => console.log('User updated successfully'))
+    .catch(err => console.log(err.message));
 
-con.query(updateQuery, updateValues, (err, res) => {
-    if (!err) {
-        console.log('User updated successfully');
-    } else {
-        console.log(err.message);
-    }
-    con.end;  // Properly end the connection
-});
-
-
-//DELETE OPERATION
-const deleteQuery = `DELETE FROM users WHERE user_id = $1`;
+// Delete a user
 const deleteValues = [3];
-
-con.query(deleteQuery, deleteValues, (err, res) => {
-    if (!err) {
-        console.log('User deleted successfully');
-    } else {
-        console.log(err.message);
-    }
-    con.end;  // Properly end the connection
-});
-
-//users table
-con.query("Select * from users",(err,res)=>{
-    if(!err){
-        console.log(res.rows);
-    }
-    else{
-        console.log(err.message);
-    }
-    con.end();
-})
-
-
-
+db.deleteUser(deleteValues)
+    .then(() => console.log('User deleted successfully'))
+    .catch(err => console.log(err.message));

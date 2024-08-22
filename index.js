@@ -30,4 +30,4 @@ db.updateUser(updateValues)
 const deleteValues = [3];
 db.deleteUser(deleteValues)
     .then(() => console.log('User deleted successfully'))
-    .catch(err => console.log(err.message));
+    .catch(err => console.log(err.message)); 

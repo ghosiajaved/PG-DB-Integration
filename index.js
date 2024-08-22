@@ -1,33 +1,26 @@
-const db = require('./db/db');
+// index.js
+const express = require('express');
+const app = express();
+const productRoutes = require('./routes/productRoute');
+const userRoutes = require('./routes/userRoute');
+const orderRoutes = require('./routes/orderRoute');
+const categoryRoutes = require('./routes/categoryRoute');
 
-// Fetch all products
-db.getAllFromTable('products')
-    .then(res => console.log(res.rows))
-    .catch(err => console.log(err.message));
+// Middleware
+app.use(express.json());
 
-// Fetch all categories
-db.getAllFromTable('categories')
-    .then(res => console.log(res.rows))
-    .catch(err => console.log(err.message));
+app.get('/', (req, res) => {
+    res.send('Welcome to the Ecommerce API');
+});
 
-db.getAllFromTable('users')
-    .then(res => console.log(res.rows))
-    .catch(err => console.log(err.message));
+// Routes
+app.use('/api/products', productRoutes);              //Checked all of these using POSTMAN 
+app.use('/api/users', userRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/categories', categoryRoutes);
 
-// Insert a user
-const insertValues = [3, 'walijaa@gmail.com', 'Walija', 'Bahria Town', '1000'];
-db.insertUser(insertValues)
-    .then(() => console.log('User inserted successfully'))
-    .catch(err => console.log(err.message));
-
-// Update a user
-const updateValues = ['Ayla', 3];
-db.updateUser(updateValues)
-    .then(() => console.log('User updated successfully'))
-    .catch(err => console.log(err.message));
-
-// Delete a user
-const deleteValues = [3];
-db.deleteUser(deleteValues)
-    .then(() => console.log('User deleted successfully'))
-    .catch(err => console.log(err.message)); 
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+});

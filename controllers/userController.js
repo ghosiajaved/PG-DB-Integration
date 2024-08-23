@@ -13,6 +13,8 @@ exports.getAllUsers = async (req, res) => {
 exports.getUserById = async (req, res) => {
     try {
         const { id } = req.params;
+        /* const error = new Error('General Error Handler Test');        Testing Error Handler
+        next(error);  */
         const result = await client.query('SELECT * FROM users WHERE user_id = $1', [id]);
         if (result.rows.length === 0) {
             return res.status(404).json({ message: 'User not found' });

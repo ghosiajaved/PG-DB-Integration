@@ -36,6 +36,17 @@ exports.createProduct = async (req, res) => {
     }
 };
 
+// checking if validation error handler works fine or not
+/* exports.createProduct = (req, res, next) => {
+    const { name, price } = req.body;
+    if (!name || !price) {
+        const err = new Error('Validation Error: Name and price are required');
+        err.name = 'ValidationError'; // This triggers the validation error handler
+        return next(err);
+    }
+       
+}; */
+
 exports.updateProduct = async (req, res) => {
     try {
         const { id } = req.params;

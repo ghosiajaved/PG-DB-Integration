@@ -1,12 +1,28 @@
 import './App.css';
-import Form from './components/Form.js';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import Form from './components/Form';
+import Home from './components/Home';
+import PrivateRoute from './components/PrivateRoute';
+
 
 function App() {
   return (
-    <div className="App">
+    /* <div className="App">
       <br/>
        <Form />
-    </div>
+    </div> */
+
+    <Router>
+      <Routes>
+
+      <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/signup" element={<Form isSignup />} />
+        <Route path="/login" element={<Form />} />
+        <Route path="/home" element={<PrivateRoute component={Home} />} />
+
+      </Routes>
+    </Router>
+
   );
 }
 

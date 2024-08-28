@@ -2,12 +2,24 @@ const express = require('express');
 const app = express();
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
-const axios = require('axios');
-const { getAllUsers, getUserById } = require('./api/userApi');
+const cors = require('cors');
 
 // Parse incoming JSON requests
 app.use(express.json());
 app.use(cookieParser());
+
+app.use(cors({
+    origin: 'http://localhost:3001', 
+    credentials: true
+}));
+
+app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "http://localhost:3001");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    next();
+});
+
 
 // Import Routes
 const productRoutes = require('./routes/productRoute');    // Checked all of these using POSTMAN 
@@ -30,51 +42,6 @@ const requestTime = require('./middlewares/requestTime');
 // Apply middleware
 app.use(logger);
 app.use(requestTime);
-
-// Display User Data on Screen using Axios with Token
-app.get('/displayusers', async (req, res) => {
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImF5ZXphQGdtYWlsLmNvbSIsImlkIjo4LCJpYXQiOjE3MjQ3NjYwNjUsImV4cCI6MTcyNDc2OTY2NX0.miS3RAnIRWHjHjMeI1PDXKvV1ajxwBnoll8h-x_kBl0'; 
-
-    try {
-        const users = await getAllUsers(token);
-
-        let html = '<br/><center><h1>User Data Extracted With Axios</h1><ul></center><br/>';
-        users.forEach(user => {
-            html += `<center><li>Name: ${user.name}</li>
-            <li>Email: ${user.email}</li>
-            <li>Address: ${user.address}</li>
-            <li>Phone: ${user.phone}</li></center>
-            <br/><br/>`;
-        });
-        html += '</ul>';
-
-        res.send(html);  // Send the HTML response
-    } catch (error) {
-        console.error('Error fetching user data:', error.message);  // Log the error
-        res.status(500).send('Error fetching user data');
-    }
-});
-
-app.get('/user/:id', async (req, res) => {
-    const { id } = req.params;
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImF5ZXphQGdtYWlsLmNvbSIsImlkIjo4LCJpYXQiOjE3MjQ3NjYwNjUsImV4cCI6MTcyNDc2OTY2NX0.miS3RAnIRWHjHjMeI1PDXKvV1ajxwBnoll8h-x_kBl0'; // Replace with your actual token
-
-    try {
-        const user = await getUserById(id, token);
-
-        let html = `<br/><center><h1>Individual User Extracted With Axios</h1><ul></center><br/>
-            <center><li>Name: ${user.name}</li>
-            <li>Email: ${user.email}</li>
-            <li>Address: ${user.address}</li>
-            <li>Phone: ${user.phone}</li></center>
-            <br/><br/>`;
-
-        res.send(html);  // Send the HTML response
-    } catch (error) {
-        console.error('Error fetching user data:', error.message);  // Log the error
-        res.status(500).send('Error fetching user data');
-    }
-});
 
 // Root route
 app.get('/', (req, res) => {
@@ -100,7 +67,7 @@ app.use(validationError);
 app.use(errorHandler);
 
 // Start the server
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
